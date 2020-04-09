@@ -52,11 +52,11 @@ public class BookController
 //    return bookRepository.findById(id).orElseThrow( BookNotFoundException::bind( BookNotFoundException::new, "not found")); ez nem jo valamiert
   }
 
-  @PostMapping
+  @PostMapping( "/create")
   @ResponseStatus(HttpStatus.CREATED)
   public Book create( @RequestBody Book book)
   {
-    return bookRepository.save(book);
+    return bookRepository.save( book);
   }
 
   @DeleteMapping("/{id}")
