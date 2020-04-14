@@ -23,15 +23,20 @@ import java.util.function.Supplier;
  *           @Valid @RequestBody UserResource userResource,               // 2.
  *           @RequestParam("sendWelcomeMail") boolean sendWelcomeMail) {  // 3.
  *
- *  2. : Parameters my be annotated with @Valid to indicate that Spring should perform bean validation on them.
+ *  2. : Parameters may be annotated with @Valid to indicate that Spring should perform bean validation on them.
  */
 @RestController // =  @Controller + @ResponseBody (each method marshalls the returned resource right to the HTTP response)
 @RequestMapping("/api/books")
 public class BookController
 {
-
   @Autowired
   private BookRepository bookRepository;
+
+  @Autowired
+  public BookController()
+  {
+
+  }
 
   @GetMapping
   public Iterable findAll()
@@ -48,7 +53,7 @@ public class BookController
   @GetMapping("/{id}")
   public Book findOne(@PathVariable Long id)
   {
-    return bookRepository.findById(id).orElseThrow( bind( BookNotFoundException::new, "not found"));
+    return bookRepository.findById(id).orElseThrow( createExceptionWithMessage( BookNotFoundException::new, "not found"));
 //    return bookRepository.findById(id).orElseThrow( BookNotFoundException::bind( BookNotFoundException::new, "not found")); ez nem jo valamiert
   }
 
@@ -62,23 +67,23 @@ public class BookController
   @DeleteMapping("/{id}")
   public void delete( @PathVariable Long id)
   {
-    bookRepository.findById(id).orElseThrow( bind( BookNotFoundException::new, "not found")); // az exceptionban levo bind()-et nem talalja
+    bookRepository.findById(id).orElseThrow( createExceptionWithMessage( BookNotFoundException::new, "not found")); // az exceptionban levo bind()-et nem talalja
     bookRepository.deleteById(id);
   }
 
   @PutMapping("/{id}")
   public Book updateBook( @RequestBody Book book, @PathVariable Long id) throws BookIdMismatchException
   {
-    if (book.getId() != id)
+    if ( book.getId() != id ) // nem jo otlet ez a redundans interfesz ...
     {
       throw new BookIdMismatchException();
     }
 
-    bookRepository.findById(id).orElseThrow( bind( BookNotFoundException::new, "not found")); // az exceptionban levo bind()-et nem talalja
+    bookRepository.findById(id).orElseThrow( createExceptionWithMessage( BookNotFoundException::new, "not found")); // az exceptionban levo bind()-et nem talalja
     return bookRepository.save( book);
   }
 
-  public static <T, R> Supplier<R> bind(Function<T,R> function, T value)
+  public static <T, R> Supplier<R> createExceptionWithMessage(Function<T,R> function, T value)
   {
     return () -> function.apply( value);
   }

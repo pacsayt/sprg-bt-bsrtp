@@ -15,9 +15,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories( "baeldung.sprgbtbsrtp") // scan the specified package for repositories
 @EntityScan( "baeldung.sprgbtbsrtp")            // pick up our JPA entities
 @SpringBootApplication
-public class SprgBtBsrtpApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(SprgBtBsrtpApplication.class, args);
+public class SprgBtBsrtpApplication
+{
+	public static void main( String[] args)
+	{
+		SpringApplication.run( SprgBtBsrtpApplication.class, args);
 	}
 }

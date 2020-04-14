@@ -1,6 +1,8 @@
 package baeldung.sprgbtbsrtp;
 
 // import static org.hamcrest.MatcherAssert.assertThat;
+import baeldung.sprgbtbsrtp.persistency.DummyBookRepository;
+
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -25,10 +27,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 /**
  * @WebMvcTest
@@ -49,21 +53,22 @@ import org.springframework.test.web.servlet.MockMvc;
  * https://spring.io/guides/gs/testing-web/ - itt a restAssured & Co. nem uzemelt be
  */
 
-// @RunWith( SpringRunner.class) ezt nem talalja ... helyette :
-// @ExtendWith( SpringExtension.class) // allitolag nem kell mar, mert benne van a @DataJpaTest/@WebMvcTest/@SpringBootTest-ban
-@WebMvcTest( controllers = BookController.class)
-// @AutoConfigureMockMvc
-// @AutoConfigureWebMvc
+// @RunWith( SpringRunner.class)         // JUnit 4.x ezt nem talalja ... helyette :
+// @ExtendWith( SpringExtension.class)   // JUnit 5 Jupiter allitolag nem kell mar, mert benne van a @DataJpaTest/@WebMvcTest/@SpringBootTest-ban
+// @WebMvcTest( controllers = BookController.class) // spring-boot-test
+
+@SpringBootTest
+@AutoConfigureMockMvc
 public class BookControllerTest
 {
-  // instance to simulate HTTP requests
-  @Autowired
-  private MockMvc mockMvc;
-
   // Spring Boot automatically provides beans like an @ObjectMapper to map to and from JSON
   // and a MockMvc instance to simulate HTTP requests.
   @Autowired
   private ObjectMapper objectMapper;
+
+  // instance to simulate HTTP requests
+  @Autowired
+  private MockMvc mockMvc; // null
 
   @InjectMocks // l. meg : https://howtodoinjava.com/mockito/mockito-mock-injectmocks/
   private BookController bookController;
@@ -101,7 +106,7 @@ public class BookControllerTest
   }
 
   @Test
-  public void testCreate() throws Exception
+  public void checkParamPassedToBusiness() throws Exception
   {
     Book newBook = new Book( 123, "Cim", "Szerzo");
 
@@ -116,11 +121,16 @@ public class BookControllerTest
     assertThat( bookCaptor.getValue().getTitle(), is( "Cim"));
     assertThat( bookCaptor.getValue().getAuthor(), is( "Szerzo"));
   }
-}
 
-/*
-import io.reflectoring.testing.persistence.PersistenceAdapter;
-import io.reflectoring.testing.persistence.UserEntity;
-import io.reflectoring.testing.persistence.UserRepository;
-import io.reflectoring.testing.web.UserResource;
- */
+  @Test
+  public void checkReturnedStuff() throws Exception
+  {
+    // "findOne() -> findById()"
+    MvcResult mvcResult = mockMvc.perform( get( "/api/books/{id}", 123))
+                                 .andReturn();
+
+    String actualResponseBody = mvcResult.getResponse().getContentAsString();
+
+    assertThat( objectMapper.writeValueAsString( DummyBookRepository.DUMMY_BOOK_1), is(actualResponseBody));
+  }
+}
