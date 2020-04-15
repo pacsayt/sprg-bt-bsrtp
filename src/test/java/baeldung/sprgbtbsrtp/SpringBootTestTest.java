@@ -1,11 +1,10 @@
 package baeldung.sprgbtbsrtp;
 
-// import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import baeldung.sprgbtbsrtp.persistency.DummyBookRepository;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -16,23 +15,22 @@ import baeldung.sprgbtbsrtp.components.Book;
 import baeldung.sprgbtbsrtp.components.BookController;
 import baeldung.sprgbtbsrtp.persistency.BookRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
+import org.aspectj.lang.annotation.Before;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+
+import java.util.Optional;
 
 /**
  * @WebMvcTest
@@ -59,7 +57,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class BookControllerTest
+public class SpringBootTestTest
 {
   // Spring Boot automatically provides beans like an @ObjectMapper to map to and from JSON
   // and a MockMvc instance to simulate HTTP requests.
@@ -68,7 +66,7 @@ public class BookControllerTest
 
   // instance to simulate HTTP requests
   @Autowired
-  private MockMvc mockMvc; // null
+  private MockMvc mockMvc;
 
   @InjectMocks // l. meg : https://howtodoinjava.com/mockito/mockito-mock-injectmocks/
   private BookController bookController;
@@ -78,7 +76,7 @@ public class BookControllerTest
   @MockBean
   private BookRepository mockBookRepository;
 
-  @Before
+  @BeforeEach
   public void setUp()
   {
     MockitoAnnotations.initMocks(this);
@@ -88,7 +86,7 @@ public class BookControllerTest
   public void testFindAllRequest() throws Exception
   {
     // simulate getting a new form for the user to fill in (GET Request)
-    mockMvc.perform( get("/api/books")
+    mockMvc.perform( get("/api/books/")
                      .contentType( "application/json")) // ???
            .andExpect( status().is(200))
            .andReturn();
@@ -97,8 +95,10 @@ public class BookControllerTest
   @Test
   public void testFindOneRequest() throws Exception
   {
+    Mockito.when( mockBookRepository.findById( 123L)).thenReturn( Optional.of( new Book( 123, "Cim", "Szerzo")));
+
     // simulate getting a new form for the user to fill in (GET Request)
-    mockMvc.perform( get("/{id}", 123).contentType("application/json"))
+    mockMvc.perform( get("/api/books/{id}", 123).contentType("application/json"))
            .andExpect( status().is(200))
            .andReturn();
 
@@ -110,14 +110,14 @@ public class BookControllerTest
   {
     Book newBook = new Book( 123, "Cim", "Szerzo");
 
-    mockMvc.perform( post( "/api/books/create")
+    mockMvc.perform( post( "/api/books/create/")
                      .contentType( "application/json")
                      .content( objectMapper.writeValueAsString( newBook))) // <-> create( @RequestBody Book book)
-            .andExpect( status().isOk()); // <->             .andExpect( status().isOk()); // <->
+            .andExpect( status().isCreated());
 
 
     ArgumentCaptor<Book> bookCaptor = ArgumentCaptor.forClass( Book.class);
-    verify( bookController, times(1)).create( bookCaptor.capture());
+    verify( mockBookRepository, times(1)).save( bookCaptor.capture());
     assertThat( bookCaptor.getValue().getTitle(), is( "Cim"));
     assertThat( bookCaptor.getValue().getAuthor(), is( "Szerzo"));
   }

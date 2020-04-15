@@ -1,9 +1,9 @@
 package baeldung.sprgbtbsrtp;
 
 import org.hamcrest.Matchers;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,12 +30,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 // MkYong szerint : https://mkyong.com/spring-boot/spring-boot-test-unable-to-autowired-mockmvc/
 // es ez telleg beinjektalja a MockMvc-t !!!
-@RunWith(SpringRunner.class)
+// @RunWith(SpringRunner.class) // JUnit vintage kiexcludalva a pom.xml-ben
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc //need this in Spring Boot test
-
 public class WebLayerTest
 {
+  @Value("${spring.application.name}")
+  String appName;
+
   @Autowired
   private MockMvc mockMvc; // null
 
@@ -43,6 +45,6 @@ public class WebLayerTest
   public void test() throws Exception
   {
     mockMvc.perform( get( "/")).andDo( print()).andExpect( MockMvcResultMatchers.status().isOk())
-                                                          .andExpect( MockMvcResultMatchers.content().string( Matchers.containsString( "XXXXXXXXXXXXXXXXXX")) );
+                                                          .andExpect( MockMvcResultMatchers.content().string( Matchers.containsString( appName)) );
   }
 }

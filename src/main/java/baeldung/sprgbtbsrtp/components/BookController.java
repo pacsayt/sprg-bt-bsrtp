@@ -38,7 +38,7 @@ public class BookController
 
   }
 
-  @GetMapping
+  @GetMapping( "/")
   public Iterable findAll()
   {
     return bookRepository.findAll();
