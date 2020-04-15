@@ -68,13 +68,13 @@ public class SpringBootTestTest
   @Autowired
   private MockMvc mockMvc;
 
-  @InjectMocks // l. meg : https://howtodoinjava.com/mockito/mockito-mock-injectmocks/
-  private BookController bookController;
+//  @InjectMocks // l. meg : https://howtodoinjava.com/mockito/mockito-mock-injectmocks/
+//  private BookController bookController;
 
   // vs. @InjectMocks ??? to mock away the business logic, since we don’t want to test integration between controller
   // and business logic, but between controller and the HTTP layer.
   @MockBean
-  private BookRepository mockBookRepository;
+  private DummyBookRepository mockDummyBookRepository;
 
   @BeforeEach
   public void setUp()
@@ -95,14 +95,13 @@ public class SpringBootTestTest
   @Test
   public void testFindOneRequest() throws Exception
   {
-    Mockito.when( mockBookRepository.findById( 123L)).thenReturn( Optional.of( new Book( 123, "Cim", "Szerzo")));
+    // Itt valamiert nem a dummy repositoryt injektalja be a controllerbe, ugyhogy az "igazi" adja a kamu erteket
+    Mockito.when( mockDummyBookRepository.findById( 123L)).thenReturn( Optional.of( new Book( 123, "Cim", "Szerzo")));
 
     // simulate getting a new form for the user to fill in (GET Request)
     mockMvc.perform( get("/api/books/{id}", 123).contentType("application/json"))
            .andExpect( status().is(200))
            .andReturn();
-
-// Book( long newId, String newTitle, String newAuthor)
   }
 
   @Test
@@ -117,7 +116,7 @@ public class SpringBootTestTest
 
 
     ArgumentCaptor<Book> bookCaptor = ArgumentCaptor.forClass( Book.class);
-    verify( mockBookRepository, times(1)).save( bookCaptor.capture());
+    verify( mockDummyBookRepository, times(1)).save( bookCaptor.capture());
     assertThat( bookCaptor.getValue().getTitle(), is( "Cim"));
     assertThat( bookCaptor.getValue().getAuthor(), is( "Szerzo"));
   }
@@ -125,12 +124,14 @@ public class SpringBootTestTest
   @Test
   public void checkReturnedStuff() throws Exception
   {
+    // Itt meg a mockkal ad vissza valamit a repo/controller
+    Mockito.when( mockDummyBookRepository.findById( 123L)).thenReturn( Optional.of( DummyBookRepository.DUMMY_BOOK_1));
+
     // "findOne() -> findById()"
-    MvcResult mvcResult = mockMvc.perform( get( "/api/books/{id}", 123))
-                                 .andReturn();
+    MvcResult mvcResult = mockMvc.perform( get( "/api/books/{id}", 123)).andReturn();
 
     String actualResponseBody = mvcResult.getResponse().getContentAsString();
 
-    assertThat( objectMapper.writeValueAsString( DummyBookRepository.DUMMY_BOOK_1), is(actualResponseBody));
+    assertThat( objectMapper.writeValueAsString( DummyBookRepository.DUMMY_BOOK_1), is( actualResponseBody));
   }
 }

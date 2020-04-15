@@ -1,12 +1,14 @@
 package baeldung.sprgbtbsrtp.persistency;
 
 import baeldung.sprgbtbsrtp.components.Book;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public class DummyBookRepository implements BookRepository
 {
   public static final Book DUMMY_BOOK_1 =new Book( 123, "Cim_1", "Serzo_1");

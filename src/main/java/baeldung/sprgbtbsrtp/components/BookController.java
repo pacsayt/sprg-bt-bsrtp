@@ -3,11 +3,13 @@ package baeldung.sprgbtbsrtp.components;
 import baeldung.sprgbtbsrtp.errorhandling.BookIdMismatchException;
 import baeldung.sprgbtbsrtp.errorhandling.BookNotFoundException;
 import baeldung.sprgbtbsrtp.persistency.BookRepository;
+import baeldung.sprgbtbsrtp.persistency.DummyBookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -30,13 +32,7 @@ import java.util.function.Supplier;
 public class BookController
 {
   @Autowired
-  private BookRepository bookRepository;
-
-  @Autowired
-  public BookController()
-  {
-
-  }
+  private DummyBookRepository bookRepository;
 
   @GetMapping( "/")
   public Iterable findAll()
@@ -53,7 +49,9 @@ public class BookController
   @GetMapping("/{id}")
   public Book findOne(@PathVariable Long id)
   {
-    return bookRepository.findById(id).orElseThrow( createExceptionWithMessage( BookNotFoundException::new, "not found"));
+    Optional<Book> result = bookRepository.findById( id);
+
+    return result.orElseThrow( createExceptionWithMessage( BookNotFoundException::new, "not found"));
 //    return bookRepository.findById(id).orElseThrow( BookNotFoundException::bind( BookNotFoundException::new, "not found")); ez nem jo valamiert
   }
 
