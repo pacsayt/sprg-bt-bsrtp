@@ -10,9 +10,13 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  * https://www.baeldung.com/spring-boot-start
  * Error Handling for REST with Spring
  * https://www.baeldung.com/exception-handling-for-rest-with-spring
+ *
+ * Az @EnableJpaRepositories (@Enable*) annotaciot/~kat nem szabad ide tenni, hanem egy dedikalt
+ * @Configuration-osztalyba
+ * https://stackoverflow.com/questions/51467132/spring-webmvctest-with-enablejpa-annotation
  */
 
-@EnableJpaRepositories( "baeldung.sprgbtbsrtp") // scan the specified package for repositories
+// !!! NE IDE l. ^ + MainConfiguration.java @EnableJpaRepositories( "baeldung.sprgbtbsrtp") // scan the specified package for repositories
 @EntityScan( "baeldung.sprgbtbsrtp")            // pick up our JPA entities
 @SpringBootApplication
 public class SprgBtBsrtpApplication

@@ -1,6 +1,5 @@
 package baeldung.sprgbtbsrtp.errorhandling;
 
-import baeldung.sprgbtbsrtp.persistency.BookNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

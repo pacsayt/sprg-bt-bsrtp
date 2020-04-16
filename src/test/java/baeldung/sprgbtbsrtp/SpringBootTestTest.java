@@ -30,6 +30,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -96,7 +98,7 @@ public class SpringBootTestTest
   public void testFindOneRequest() throws Exception
   {
     // Itt valamiert nem a dummy repositoryt injektalja be a controllerbe, ugyhogy az "igazi" adja a kamu erteket
-    Mockito.when( mockDummyBookRepository.findById( 123L)).thenReturn( Optional.of( new Book( 123, "Cim", "Szerzo")));
+    Mockito.when( mockDummyBookRepository.findById( 123L)).thenReturn( Optional.of( DummyBookRepository.DUMMY_BOOK_1));
 
     // simulate getting a new form for the user to fill in (GET Request)
     mockMvc.perform( get("/api/books/{id}", 123).contentType("application/json"))
@@ -125,7 +127,10 @@ public class SpringBootTestTest
   public void checkReturnedStuff() throws Exception
   {
     // Itt meg a mockkal ad vissza valamit a repo/controller
-    Mockito.when( mockDummyBookRepository.findById( 123L)).thenReturn( Optional.of( DummyBookRepository.DUMMY_BOOK_1));
+    Optional<Book> optionalBook1 = Optional.of( DummyBookRepository.DUMMY_BOOK_1);
+    Optional<Book> optionalBook2 = Optional.of( DummyBookRepository.DUMMY_BOOK_2);
+//    List<Book> listOptionalBooksFound = Arrays.asList( DummyBookRepository.DUMMY_BOOK_1);
+    Mockito.when( mockDummyBookRepository.findById( 123L)).thenReturn( optionalBook1, optionalBook2);
 
     // "findOne() -> findById()"
     MvcResult mvcResult = mockMvc.perform( get( "/api/books/{id}", 123)).andReturn();

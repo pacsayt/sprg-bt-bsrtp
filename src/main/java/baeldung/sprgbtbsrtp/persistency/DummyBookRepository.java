@@ -11,8 +11,8 @@ import java.util.Optional;
 @Repository
 public class DummyBookRepository implements BookRepository
 {
-  public static final Book DUMMY_BOOK_1 =new Book( 123, "Cim_1", "Serzo_1");
-  public static final Book DUMMY_BOOK_2 =new Book( 456, "Cim_2", "Serzo_2");
+  public static final Book DUMMY_BOOK_1 =new Book( 123, "Cim_1", "Szerzo_1");
+  public static final Book DUMMY_BOOK_2 =new Book( 456, "Cim_2", "Szerzo_2");
 
   @Override
   public List<Book> findByTitle(String title)
