@@ -4,6 +4,8 @@ import baeldung.sprgbtbsrtp.errorhandling.BookIdMismatchException;
 import baeldung.sprgbtbsrtp.errorhandling.BookNotFoundException;
 import baeldung.sprgbtbsrtp.persistency.BookRepository;
 import baeldung.sprgbtbsrtp.persistency.DummyBookRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -31,12 +33,15 @@ import java.util.function.Supplier;
 @RequestMapping("/api/books")
 public class BookController
 {
+  private Logger logger = LoggerFactory.getLogger( BookController.class);
+
   @Autowired
   private DummyBookRepository bookRepository;
 
   @GetMapping( "/")
   public Iterable findAll()
   {
+    logger.info( "/api/books/ => bookRepository.findAll()");
     return bookRepository.findAll();
   }
 
