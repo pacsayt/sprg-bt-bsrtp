@@ -14,10 +14,14 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  * Az @EnableJpaRepositories (@Enable*) annotaciot/~kat nem szabad ide tenni, hanem egy dedikalt
  * @Configuration-osztalyba
  * https://stackoverflow.com/questions/51467132/spring-webmvctest-with-enablejpa-annotation
+ *
+ * ERDEKES LEHET MEG :
+ * "How to guides"
+ * https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#howto-spring-mvc
  */
 
 // !!! NE IDE l. ^ + MainConfiguration.java @EnableJpaRepositories( "baeldung.sprgbtbsrtp") // scan the specified package for repositories
-@EntityScan( "baeldung.sprgbtbsrtp")            // pick up our JPA entities
+@EntityScan( "baeldung.sprgbtbsrtp") // pick up our JPA entities
 @SpringBootApplication
 public class SprgBtBsrtpApplication
 {

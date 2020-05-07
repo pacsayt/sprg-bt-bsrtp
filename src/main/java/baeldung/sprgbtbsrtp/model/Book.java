@@ -1,4 +1,4 @@
-package baeldung.sprgbtbsrtp.components;
+package baeldung.sprgbtbsrtp.model;
 
 import javax.persistence.*;
 

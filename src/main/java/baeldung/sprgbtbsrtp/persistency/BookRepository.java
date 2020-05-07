@@ -1,6 +1,6 @@
 package baeldung.sprgbtbsrtp.persistency;
 
-import baeldung.sprgbtbsrtp.components.Book;
+import baeldung.sprgbtbsrtp.model.Book;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

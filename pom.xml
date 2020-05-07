@@ -41,6 +41,10 @@
 			<artifactId>h2</artifactId>
 		</dependency>
 
+		<!--
+		Ha ez rajta van a CP-on, alapbol minden vegpont httpBasic or formLogin
+		eljarassal vedve vagyon, emiatt kell sajat biztonsagi szabalyokat definialni
+		-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>

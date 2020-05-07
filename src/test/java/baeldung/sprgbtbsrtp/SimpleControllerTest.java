@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  *
  * ************************************ EZ MUXIK. **************************************
 */
+// @RunWith(SpringRunner.class) ??? : minek meg ez is (https://www.baeldung.com/spring-boot-start)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SimpleControllerTest
 {

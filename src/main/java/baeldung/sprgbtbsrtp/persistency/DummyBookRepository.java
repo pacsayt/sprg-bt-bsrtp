@@ -1,9 +1,8 @@
 package baeldung.sprgbtbsrtp.persistency;
 
-import baeldung.sprgbtbsrtp.components.Book;
+import baeldung.sprgbtbsrtp.model.Book;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;

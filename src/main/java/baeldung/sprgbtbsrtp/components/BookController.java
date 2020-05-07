@@ -2,7 +2,7 @@ package baeldung.sprgbtbsrtp.components;
 
 import baeldung.sprgbtbsrtp.errorhandling.BookIdMismatchException;
 import baeldung.sprgbtbsrtp.errorhandling.BookNotFoundException;
-import baeldung.sprgbtbsrtp.persistency.BookRepository;
+import baeldung.sprgbtbsrtp.model.Book;
 import baeldung.sprgbtbsrtp.persistency.DummyBookRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +29,11 @@ import java.util.function.Supplier;
  *
  *  2. : Parameters may be annotated with @Valid to indicate that Spring should perform bean validation on them.
  */
+
+/**
+ * Spring uses HttpMessageConverters to render @ResponseBody (or responses from @RestController).
+ * https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#howto-spring-mvc
+ */
 @RestController // =  @Controller + @ResponseBody (each method marshalls the returned resource right to the HTTP response)
 @RequestMapping("/api/books")
 public class BookController
@@ -48,12 +53,16 @@ public class BookController
   @GetMapping("/title/{bookTitle}")
   public List findByTitle( @PathVariable String bookTitle)
   {
+    logger.info( "findByTitle() : /api/books/title/" + bookTitle);
+
     return bookRepository.findByTitle( bookTitle);
   }
 
   @GetMapping("/{id}")
   public Book findOne(@PathVariable Long id)
   {
+    logger.info( "findOne() : /api/books/" + id);
+
     Optional<Book> result = bookRepository.findById( id);
 
     return result.orElseThrow( createExceptionWithMessage( BookNotFoundException::new, "not found"));
@@ -64,12 +73,15 @@ public class BookController
   @ResponseStatus(HttpStatus.CREATED)
   public Book create( @RequestBody Book book)
   {
+    logger.info( "create() : /api/books/create : book=" + book);
     return bookRepository.save( book);
   }
 
   @DeleteMapping("/{id}")
   public void delete( @PathVariable Long id)
   {
+    logger.info( "delete() : /api/books/ : id=" + id);
+
     bookRepository.findById(id).orElseThrow( createExceptionWithMessage( BookNotFoundException::new, "not found")); // az exceptionban levo bind()-et nem talalja
     bookRepository.deleteById(id);
   }
@@ -77,6 +89,8 @@ public class BookController
   @PutMapping("/{id}")
   public Book updateBook( @RequestBody Book book, @PathVariable Long id) throws BookIdMismatchException
   {
+    logger.info( "updateBook() : /api/books/ : id=" + id);
+
     if ( book.getId() != id ) // nem jo otlet ez a redundans interfesz ...
     {
       throw new BookIdMismatchException();

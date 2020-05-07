@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class SimpleController
 {
-  @Value("${spring.application.name}")
+  @Value("${spring.application.name}") // application.properties : spring.application.name=Bootstrap Spring Boot
   String appName;
 
   @GetMapping("/")
